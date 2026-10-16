@@ -2,10 +2,9 @@ package in.prakash.CurdOpeationSpring.controller;
 
 import in.prakash.CurdOpeationSpring.entity.Student;
 import in.prakash.CurdOpeationSpring.service.StudentService;
-import org.apache.catalina.LifecycleState;
+import jakarta.websocket.server.PathParam;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -13,7 +12,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/students")
 public class StudentController {
-    private StudentService studentService;
+    private final StudentService studentService;
     public StudentController(StudentService studentService){
         this.studentService=studentService;
     }
@@ -46,9 +45,9 @@ public class StudentController {
         return ResponseEntity.ok(studentList);
 
     }
-
-    @PutMapping("/get/{id}")
-    public ResponseEntity<Student>updateStudent(@PathVariable Long id,@RequestBody Student studentReq){
+// for query parameter
+    @PutMapping("/update")
+    public ResponseEntity<Student>updateStudent(@RequestParam Long id, @RequestBody Student studentReq){
         Student studentRes=studentService.updateStudent(id,studentReq);
         if(studentRes==null){
             //return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
@@ -66,6 +65,17 @@ public class StudentController {
        }
        return ResponseEntity.ok("record delete");
     }
+    // softDelete
+    @PatchMapping("/delete-soft/{id}")
+public ResponseEntity<String>deleteStudentSoftly(@PathVariable Long id) {
+        Boolean isDeleted = studentService.deleteStudentSoftly(id);
+        if (!isDeleted) {
+        return ResponseEntity.notFound().build();
+        }
+    return ResponseEntity.ok("Record deleted");
+
+    }
+
 
 
 }

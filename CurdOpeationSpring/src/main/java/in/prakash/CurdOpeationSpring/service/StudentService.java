@@ -2,7 +2,6 @@ package in.prakash.CurdOpeationSpring.service;
 
 import in.prakash.CurdOpeationSpring.entity.Student;
 import in.prakash.CurdOpeationSpring.repository.StudentRepository;
-import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -10,19 +9,18 @@ import java.util.Optional;
 
 @Service
 public class StudentService {
-    private StudentRepository studentRepository;
+    private final StudentRepository studentRepository;
+
     public StudentService(StudentRepository studentRepository){
         this.studentRepository=studentRepository;
     }
 
     public Student createStudent(Student studentReq){
-        //business logic
-        //store to db
-     Student studentRes=studentRepository.save(studentReq);
-return  studentReq;
+        studentReq.setDeleted(false);
+        return studentRepository.save(studentReq);
     }
     public Student getStudent(Long id){
-        Optional<Student> studentRes=studentRepository.findById(id);
+        Optional<Student> studentRes=studentRepository.findByIdAndDeletedIsFalse(id);
         if(studentRes.isPresent()){
             return studentRes.get();
         }
@@ -30,12 +28,11 @@ return  studentReq;
         return null;
     }
 public  List<Student>getAllStudent(){
- List<Student>  studentList=studentRepository.findAll();
- return studentList;
+ return studentRepository.findByDeletedIsFalse();
 }
 
 public Student updateStudent(Long id,Student studentReq){
-        Optional<Student>existingStudent=studentRepository.findById(id);
+        Optional<Student>existingStudent=studentRepository.findByIdAndDeletedIsFalse(id);
         if(existingStudent.isEmpty()){
             return null;
         }
@@ -43,8 +40,9 @@ public Student updateStudent(Long id,Student studentReq){
         studentToSave.setName(studentReq.getName());
         studentToSave.setAge(studentReq.getAge());
         studentToSave.setEmail(studentReq.getEmail());
-        studentToSave.setId(studentReq.getId());
         studentToSave.setRollNo(studentReq.getRollNo());
+        studentToSave.setSubject(studentReq.getSubject());
+        studentToSave.setDeleted(false);
 return studentRepository.save(studentToSave);
 }
 
@@ -56,5 +54,16 @@ public Boolean deleteStudent(Long id) {
     }
       studentRepository.deleteById(id);
     return true;
+}
+//softDeleted
+public Boolean deleteStudentSoftly(Long id) {
+  Optional<Student> existingStudent=studentRepository.findByIdAndDeletedIsFalse(id);
+  if(existingStudent.isEmpty()){
+      return false;
+  }
+  Student studentToSave=existingStudent.get();
+  studentToSave.setDeleted(true);
+  studentRepository.save(studentToSave);
+  return true;
 }
 }

@@ -4,7 +4,10 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import org.hibernate.annotations.AnyDiscriminatorImplicitValues;
+import jakarta.persistence.PrePersist;
+import jakarta.persistence.PreUpdate;
+
+import java.time.LocalDateTime;
 
 @Entity
 
@@ -18,6 +21,8 @@ public class Student {
   private long rollNo;
     private  String subject;
     private Boolean deleted;
+    private LocalDateTime createdAt;
+    private LocalDateTime updatedAt;
 
     public Long getId() {
         return id;
@@ -30,6 +35,7 @@ public class Student {
     public int getAge() {
         return age;
     }
+
 
     public String getEmail() {
         return email;
@@ -92,5 +98,35 @@ public class Student {
     public Student setDeleted(Boolean deleted) {
         this.deleted = deleted;
         return this;
+    }
+
+    public LocalDateTime getUpdatedAt() {
+        return updatedAt;
+    }
+
+    public Student setUpdatedAt(LocalDateTime updatedAt) {
+        this.updatedAt = updatedAt;
+        return this;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public Student setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
+        return this;
+    }
+
+    @PrePersist
+    private void setCreationTimestamps() {
+        LocalDateTime now = LocalDateTime.now();
+        createdAt = now;
+        updatedAt = now;
+    }
+
+    @PreUpdate
+    private void setUpdateTimestamp() {
+        updatedAt = LocalDateTime.now();
     }
 }

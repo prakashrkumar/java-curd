@@ -14,7 +14,7 @@ public class CreateStudentRequestDTO {
     @Email(message = "student email must be valid")
     private String email;
     @NotNull(message = "rollno is required")
-    private Integer rollNo;
+    private Long rollNo;
     @NotBlank(message = "sublect name must be required")
     private String subject;
 
@@ -45,11 +45,11 @@ public class CreateStudentRequestDTO {
         return this;
     }
 
-    public Integer getRollNo() {
+    public Long getRollNo() {
         return rollNo;
     }
 
-    public CreateStudentRequestDTO setRollNo(Integer rollNo) {
+    public CreateStudentRequestDTO setRollNo(Long rollNo) {
         this.rollNo = rollNo;
         return this;
     }
